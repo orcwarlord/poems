@@ -1,0 +1,20 @@
+Options -Indexes
+
+# Enable clean URLs (strip .php extension)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Skip real files and directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Rewrite extensionless paths to their .php counterpart
+    RewriteRule ^([^.]+)$ $1.php [NC,L,QSA]
+</IfModule>
+
+# Deny access to includes directory
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

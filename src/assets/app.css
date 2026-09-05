@@ -1,0 +1,77 @@
+/*
+ * app.css — Quill editor overrides to match the Tailwind light theme.
+ * Loaded on every page; Quill rules only apply when the editor is present.
+ */
+
+/* ── Quill container ──────────────────────────────────────────────────────── */
+.ql-container.ql-snow {
+    border: 1px solid #d6d3d1; /* stone-300 */
+    border-top: none;
+    border-radius: 0 0 0.375rem 0.375rem;
+    font-family: Georgia, Cambria, "Times New Roman", serif;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #1c1917; /* stone-900 */
+    background: #ffffff;
+}
+
+.ql-toolbar.ql-snow {
+    border: 1px solid #d6d3d1; /* stone-300 */
+    border-radius: 0.375rem 0.375rem 0 0;
+    background: #fafaf9; /* stone-50 */
+    padding: 0.5rem 0.75rem;
+}
+
+.ql-toolbar.ql-snow .ql-formats {
+    margin-right: 0.75rem;
+}
+
+/* Toolbar button hover / active */
+.ql-snow.ql-toolbar button:hover,
+.ql-snow .ql-toolbar button:hover,
+.ql-snow.ql-toolbar button.ql-active,
+.ql-snow .ql-toolbar button.ql-active {
+    color: #b45309; /* amber-700 */
+}
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow .ql-toolbar button:hover .ql-stroke,
+.ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.ql-snow .ql-toolbar button.ql-active .ql-stroke {
+    stroke: #b45309;
+}
+.ql-snow.ql-toolbar button:hover .ql-fill,
+.ql-snow .ql-toolbar button:hover .ql-fill {
+    fill: #b45309;
+}
+
+/* Editor focus ring */
+.ql-container.ql-snow:focus-within {
+    border-color: #f59e0b; /* amber-500 */
+    box-shadow: 0 0 0 1px #f59e0b;
+}
+
+/* Placeholder */
+.ql-editor.ql-blank::before {
+    color: #a8a29e; /* stone-400 */
+    font-style: normal;
+    font-family: Georgia, Cambria, serif;
+}
+
+/* Editor min-height */
+.ql-editor {
+    min-height: 16rem;
+    padding: 1rem;
+}
+
+/* ── Prose / poem display ─────────────────────────────────────────────────── */
+.poem-content.prose p {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 1.35 !important;
+}
+
+/* Quill represents a double return as an empty paragraph. */
+.poem-content.prose p:has(> br:only-child) {
+    min-height: 1.5em;
+    margin: 0.75em 0 !important;
+}
