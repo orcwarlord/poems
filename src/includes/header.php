@@ -19,6 +19,10 @@ $_error   = get_flash('error');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($pageTitle ?? 'Dashboard') ?> — Verse Library</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS CDN (includes typography plugin) -->
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
@@ -26,16 +30,17 @@ $_error   = get_flash('error');
             theme: {
                 extend: {
                     fontFamily: {
-                        display: ['Georgia', 'Cambria', '"Times New Roman"', 'serif'],
+                        sans: ['Roboto', 'sans-serif'],
+                        display: ['"Josefin Sans"', 'sans-serif'],
                     },
                     typography: {
                         DEFAULT: {
                             css: {
-                                '--tw-prose-body':        '#292524',
-                                '--tw-prose-headings':    '#1c1917',
-                                '--tw-prose-links':       '#b45309',
-                                '--tw-prose-bold':        '#1c1917',
-                                '--tw-prose-blockquotes': '#57534e',
+                                '--tw-prose-body':        '#303030',
+                                '--tw-prose-headings':    '#303030',
+                                '--tw-prose-links':       '#3a7b3a',
+                                '--tw-prose-bold':        '#303030',
+                                '--tw-prose-blockquotes': '#888888',
                                 maxWidth: 'none',
                             },
                         },
@@ -52,7 +57,7 @@ $_error   = get_flash('error');
 
     <link rel="stylesheet" href="/assets/app.css">
 </head>
-<body class="min-h-screen bg-stone-50 text-stone-900 antialiased">
+<body class="min-h-screen bg-[#fffff0] font-sans text-stone-900 antialiased">
 
 <!-- ── Navigation ──────────────────────────────────────────────────────────── -->
 <nav class="sticky top-0 z-20 border-b border-stone-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">

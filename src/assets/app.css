@@ -1,24 +1,97 @@
-/*
- * app.css — Quill editor overrides to match the Tailwind light theme.
- * Loaded on every page; Quill rules only apply when the editor is present.
- */
+:root {
+    --pfl-pink: #fbd6d7;
+    --pfl-ltgreen: #a4d5a6;
+    --pfl-green: #3a7b3a;
+    --pfl-dkgr: #303030;
+    --pfl-midgr: #888888;
+    --pfl-ltgr: #dddddd;
+    --pfl-ivory: #fffff0;
+}
+
+body {
+    background-color: var(--pfl-ivory) !important;
+    color: var(--pfl-dkgr) !important;
+}
+
+/* Keep the existing utility markup while applying the PFL palette globally. */
+[class~="text-stone-900"], [class~="text-stone-800"], [class~="text-stone-700"] {
+    color: var(--pfl-dkgr) !important;
+}
+
+[class~="text-stone-600"], [class~="text-stone-500"], [class~="text-stone-400"] {
+    color: var(--pfl-midgr) !important;
+}
+
+[class~="border-stone-300"], [class~="border-stone-200"], [class~="border-stone-100"] {
+    border-color: var(--pfl-ltgr) !important;
+}
+
+[class~="bg-stone-50"], [class~="bg-white"] {
+    background-color: #ffffff !important;
+}
+
+[class~="bg-amber-50"], [class~="bg-amber-100"] {
+    background-color: var(--pfl-pink) !important;
+}
+
+[class~="bg-amber-500"] {
+    background-color: var(--pfl-green) !important;
+}
+
+[class~="text-amber-500"] {
+    color: var(--pfl-green) !important;
+}
+
+[class~="hover:bg-amber-600"]:hover {
+    background-color: #2d612d !important;
+}
+
+[class~="border-amber-300"], [class~="border-amber-500"] {
+    border-color: var(--pfl-green) !important;
+}
+
+[class~="text-amber-600"], [class~="text-amber-700"], [class~="text-amber-800"] {
+    color: var(--pfl-green) !important;
+}
+
+[class~="hover:text-amber-700"]:hover, [class~="hover:text-amber-800"]:hover {
+    color: #2d612d !important;
+}
+
+[class~="hover:border-amber-300"]:hover {
+    border-color: var(--pfl-ltgreen) !important;
+}
+
+[class~="focus:ring-amber-500"]:focus {
+    --tw-ring-color: var(--pfl-green) !important;
+}
+
+a:not([class*="bg-"]) {
+    color: var(--pfl-green);
+}
+
+a:not([class*="bg-"]):hover {
+    color: #2d612d;
+}
+
+/* Quill editor overrides to match the PFL light theme. */
 
 /* ── Quill container ──────────────────────────────────────────────────────── */
 .ql-container.ql-snow {
-    border: 1px solid #d6d3d1; /* stone-300 */
+    border: 1px solid var(--pfl-ltgr);
     border-top: none;
     border-radius: 0 0 0.375rem 0.375rem;
-    font-family: Georgia, Cambria, "Times New Roman", serif;
+    font-family: "Roboto", sans-serif;
     font-size: 1rem;
     line-height: 1.75;
-    color: #1c1917; /* stone-900 */
+    color: var(--pfl-dkgr);
     background: #ffffff;
 }
 
 .ql-toolbar.ql-snow {
     border: 1px solid #d6d3d1; /* stone-300 */
     border-radius: 0.375rem 0.375rem 0 0;
-    background: #fafaf9; /* stone-50 */
+    background: #ffffff;
     padding: 0.5rem 0.75rem;
 }
 
@@ -31,30 +104,30 @@
 .ql-snow .ql-toolbar button:hover,
 .ql-snow.ql-toolbar button.ql-active,
 .ql-snow .ql-toolbar button.ql-active {
-    color: #b45309; /* amber-700 */
+    color: var(--pfl-green);
 }
 .ql-snow.ql-toolbar button:hover .ql-stroke,
 .ql-snow .ql-toolbar button:hover .ql-stroke,
 .ql-snow.ql-toolbar button.ql-active .ql-stroke,
 .ql-snow .ql-toolbar button.ql-active .ql-stroke {
-    stroke: #b45309;
+    stroke: var(--pfl-green);
 }
 .ql-snow.ql-toolbar button:hover .ql-fill,
 .ql-snow .ql-toolbar button:hover .ql-fill {
-    fill: #b45309;
+    fill: var(--pfl-green);
 }
 
 /* Editor focus ring */
 .ql-container.ql-snow:focus-within {
-    border-color: #f59e0b; /* amber-500 */
-    box-shadow: 0 0 0 1px #f59e0b;
+    border-color: var(--pfl-green);
+    box-shadow: 0 0 0 1px var(--pfl-green);
 }
 
 /* Placeholder */
 .ql-editor.ql-blank::before {
-    color: #a8a29e; /* stone-400 */
+    color: var(--pfl-midgr);
     font-style: normal;
-    font-family: Georgia, Cambria, serif;
+    font-family: "Roboto", sans-serif;
 }
 
 /* Editor min-height */
