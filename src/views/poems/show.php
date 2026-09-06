@@ -6,6 +6,7 @@
 
 <article class="mx-auto max-w-3xl">
     <header class="mb-8 border-b border-stone-200 pb-6">
+        <img src="<?= e($poem['photo_thumbnail_path'] ?: '/assets/default-poem.svg') ?>" alt="<?= e($poem['photo_alt_text'] ?? 'Default poem image') ?>" title="<?= e($poem['photo_title'] ?? 'Poem image') ?>" class="mb-6 aspect-[2/1] w-full rounded-xl object-cover">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-600">Poem</p>
             <time datetime="<?= e($poem['created_at']) ?>" class="text-sm text-stone-400">Created <?= date('F j, Y', strtotime($poem['created_at'])) ?></time>
@@ -21,6 +22,13 @@
         <?php foreach ($poem['categories'] as $category): ?>
         <a href="/categories/view.php?id=<?= $category['id'] ?>" class="rounded-full border border-stone-200 px-3 py-1 text-sm text-stone-600 hover:border-amber-300 hover:text-amber-700 transition-colors"><?= e($category['name']) ?></a>
         <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($poem['description'] !== ''): ?>
+    <div class="mb-10 border-y border-stone-100 py-6">
+        <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">Description</h2>
+        <div class="poem-content prose prose-stone max-w-none text-stone-600"><?= sanitize_html($poem['description']) ?></div>
     </div>
     <?php endif; ?>
 

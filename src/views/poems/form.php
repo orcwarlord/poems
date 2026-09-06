@@ -2,7 +2,12 @@
 $editing = $heading === 'Edit Poem';
 $useEditor = true;
 $editorContent = $poem['content'];
+$descriptionEditorContent = $poem['description'];
 $selectedCategoryIds = array_map('intval', array_column($poem['categories'], 'id'));
+$selectedPhotoId = (int) ($poem['photo_id'] ?? 0);
+$photoName = $poem['photo_name'] ?? ($poem['photo_original_name'] ?? '');
+$photoTitle = $poem['photo_title'] ?? '';
+$photoAltText = $poem['photo_alt_text'] ?? '';
 require_once __DIR__ . '/../../includes/header.php';
 ?>
 
@@ -13,11 +18,42 @@ require_once __DIR__ . '/../../includes/header.php';
 <div class="mx-auto max-w-3xl">
     <h1 class="mb-8 font-display text-4xl text-stone-900"><?= e($heading) ?></h1>
 
-    <form method="post" id="poem-form" class="space-y-6" novalidate>
+    <form method="post" id="poem-form" class="space-y-6" enctype="multipart/form-data" novalidate>
         <div>
             <label for="title" class="mb-1.5 block text-sm font-medium text-stone-700">Title <span class="text-red-500" aria-hidden="true">*</span></label>
             <input type="text" id="title" name="title" required value="<?= e($poem['title']) ?>" class="w-full rounded-md border border-stone-300 bg-white px-4 py-2.5 text-stone-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors" placeholder="Untitled">
         </div>
+
+        <div>
+            <label class="mb-1.5 block text-sm font-medium text-stone-700">Description</label>
+            <div id="description-editor"></div>
+            <textarea id="description" name="description" class="sr-only" aria-hidden="true" tabindex="-1"></textarea>
+        </div>
+
+        <fieldset>
+            <legend class="mb-2 block text-sm font-medium text-stone-700">Photo</legend>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <label class="block rounded-md border border-stone-200 bg-white p-4">
+                    <span class="mb-2 block text-sm text-stone-600">Upload a new photo</span>
+                    <input type="file" name="photo" accept="image/jpeg,image/png,image/gif,image/webp" class="block w-full text-sm text-stone-500 file:mr-3 file:rounded-md file:border-0 file:bg-amber-50 file:px-3 file:py-2 file:font-semibold file:text-amber-700 hover:file:bg-amber-100">
+                    <span class="mt-2 block text-xs text-stone-400">The original is kept; an 800px thumbnail is generated.</span>
+                    <div class="mt-4 space-y-3">
+                        <input type="text" name="photo_name" value="<?= e($photoName) ?>" placeholder="Name (optional; uses filename)" class="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                        <input type="text" name="photo_title" value="<?= e($photoTitle) ?>" placeholder="Image title" class="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                        <input type="text" name="photo_alt_text" value="<?= e($photoAltText) ?>" placeholder="Alt text" class="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    </div>
+                </label>
+                <label class="block rounded-md border border-stone-200 bg-white p-4">
+                    <span class="mb-2 block text-sm text-stone-600">Choose an existing photo</span>
+                    <select name="photo_id" class="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-700 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                        <option value="0">Use the default image</option>
+                        <?php foreach ($photos as $photo): ?>
+                        <option value="<?= $photo['id'] ?>" <?= $selectedPhotoId === (int) $photo['id'] ? 'selected' : '' ?>><?= e($photo['title']) ?> · <?= e($photo['original_name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+            </div>
+        </fieldset>
 
         <div>
             <label class="mb-1.5 block text-sm font-medium text-stone-700">Content <span class="text-red-500" aria-hidden="true">*</span></label>

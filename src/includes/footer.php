@@ -4,7 +4,8 @@
  *
  * Expected variables (set by calling page):
  *   bool   $useEditor     — load and initialise Quill
- *   string $editorContent — (optional) HTML to pre-load into the editor
+ *   string $editorContent — (optional) HTML to pre-load into the poem editor
+ *   string $descriptionEditorContent — (optional) HTML to pre-load into the description editor
  */
 ?>
 </main><!-- /main -->
@@ -16,7 +17,7 @@
 (function () {
     'use strict';
 
-    const quill = new Quill('#editor', {
+    const editorOptions = {
         theme: 'snow',
         placeholder: 'Begin writing your poem…',
         modules: {
@@ -33,20 +34,26 @@
                 ['link', 'clean'],
             ],
         },
+    };
+
+    const editors = [
+        { selector: '#editor', input: '#content', content: <?= json_encode($editorContent ?? '') ?>, placeholder: 'Begin writing your poem…' },
+        { selector: '#description-editor', input: '#description', content: <?= json_encode($descriptionEditorContent ?? '') ?>, placeholder: 'Add supporting text…' },
+    ].filter(({ selector }) => document.querySelector(selector));
+
+    editors.forEach(({ selector, input, content, placeholder }) => {
+        const quill = new Quill(selector, { ...editorOptions, placeholder });
+        if (content) {
+            quill.root.innerHTML = content;
+        }
+
+        const form = document.getElementById('poem-form');
+        if (form) {
+            form.addEventListener('submit', function () {
+                document.querySelector(input).value = quill.root.innerHTML;
+            });
+        }
     });
-
-    // Pre-populate for edit pages
-    <?php if (!empty($editorContent)): ?>
-    quill.root.innerHTML = <?= json_encode($editorContent) ?>;
-    <?php endif; ?>
-
-    // Sync hidden textarea on submit so the value is posted
-    const form = document.getElementById('poem-form');
-    if (form) {
-        form.addEventListener('submit', function () {
-            document.getElementById('content').value = quill.root.innerHTML;
-        });
-    }
 }());
 </script>
 <?php endif; ?>

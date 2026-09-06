@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    command: sh -c "chown -R www-data:www-data /var/www/html/uploads && apache2-foreground"
     ports:
       - "8080:80"
     environment:
@@ -11,6 +12,7 @@ services:
       DB_PASSWORD: app
     volumes:
       - ./src:/var/www/html
+      - uploads_data:/var/www/html/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -35,3 +37,4 @@ services:
 
 volumes:
   mysql_data:
+  uploads_data:
