@@ -23,9 +23,11 @@ CREATE TABLE IF NOT EXISTS poems (
     written_date DATE NOT NULL,
     description MEDIUMTEXT NOT NULL,
     content MEDIUMTEXT NOT NULL,
+    parent_poem_id INT UNSIGNED NULL,
     photo_id INT UNSIGNED NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_poems_parent FOREIGN KEY (parent_poem_id) REFERENCES poems (id) ON DELETE SET NULL,
     CONSTRAINT fk_poems_photo FOREIGN KEY (photo_id) REFERENCES photo_assets (id) ON DELETE SET NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
