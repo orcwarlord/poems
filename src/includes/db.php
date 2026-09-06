@@ -34,6 +34,15 @@ function get_db(): PDO
             if ((int) $columnExists === 0) {
                 $pdo->exec('ALTER TABLE poems ADD COLUMN description MEDIUMTEXT NOT NULL AFTER title');
             }
+            $writtenDateExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.columns
+                 WHERE table_schema = DATABASE() AND table_name = 'poems' AND column_name = 'written_date'"
+            )->fetchColumn();
+            if ((int) $writtenDateExists === 0) {
+                $pdo->exec('ALTER TABLE poems ADD COLUMN written_date DATE NULL AFTER title');
+                $pdo->exec('UPDATE poems SET written_date = DATE(created_at) WHERE written_date IS NULL');
+                $pdo->exec('ALTER TABLE poems MODIFY COLUMN written_date DATE NOT NULL');
+            }
             $pdo->exec(
                 'CREATE TABLE IF NOT EXISTS photo_assets (
                     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

@@ -27,6 +27,7 @@ class PoemController
     {
         $poem = [
             'title' => '',
+            'written_date' => date('Y-m-d'),
             'description' => '',
             'content' => '',
             'photo_id' => null,
@@ -41,7 +42,7 @@ class PoemController
             [$poem, $errors] = $this->formData();
 
             if ($errors === []) {
-                $this->poems->create($poem['title'], $poem['description'], $poem['content'], $poem['photo_id'], $poem['categoryIds']);
+                $this->poems->create($poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $poem['categoryIds']);
                 flash('success', 'Your poem has been saved.');
                 header('Location: /');
                 exit;
@@ -78,6 +79,7 @@ class PoemController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             [$formData, $errors] = $this->formData();
             $poem['title'] = $formData['title'];
+            $poem['written_date'] = $formData['written_date'];
             $poem['description'] = $formData['description'];
             $poem['content'] = $formData['content'];
             $poem['photo_id'] = $formData['photo_id'];
@@ -87,7 +89,7 @@ class PoemController
             $poem['categories'] = $formData['categories'];
 
             if ($errors === []) {
-                $this->poems->update($id, $poem['title'], $poem['description'], $poem['content'], $poem['photo_id'], $formData['categoryIds']);
+                $this->poems->update($id, $poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $formData['categoryIds']);
                 flash('success', 'Your poem has been updated.');
                 header('Location: /poems/view.php?id=' . $id);
                 exit;
@@ -128,6 +130,7 @@ class PoemController
     {
         $poem = [
             'title' => trim((string) ($_POST['title'] ?? '')),
+            'written_date' => trim((string) ($_POST['written_date'] ?? '')),
             'description' => sanitize_html(trim((string) ($_POST['description'] ?? ''))),
             'content' => sanitize_html(trim((string) ($_POST['content'] ?? ''))),
             'photo_id' => null,
@@ -141,6 +144,12 @@ class PoemController
         ), static fn (int $id): bool => $id > 0)));
         $categories = [];
         $errors = [];
+
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $poem['written_date']);
+        if ($date === false || $date->format('Y-m-d') !== $poem['written_date']) {
+            $errors[] = 'A valid written date is required.';
+            flash('error', 'A valid written date is required.');
+        }
 
         $selectedPhotoId = (int) ($_POST['photo_id'] ?? 0);
         if ($selectedPhotoId > 0) {

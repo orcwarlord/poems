@@ -25,6 +25,11 @@ require_once __DIR__ . '/../../includes/header.php';
         </div>
 
         <div>
+            <label for="written_date" class="mb-1.5 block text-sm font-medium text-stone-700">Written Date <span class="text-red-500" aria-hidden="true">*</span></label>
+            <input type="date" id="written_date" name="written_date" required value="<?= e($poem['written_date']) ?>" class="w-full rounded-md border border-stone-300 bg-white px-4 py-2.5 text-stone-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors">
+        </div>
+
+        <div>
             <label class="mb-1.5 block text-sm font-medium text-stone-700">Description</label>
             <div id="description-editor"></div>
             <textarea id="description" name="description" class="sr-only" aria-hidden="true" tabindex="-1"></textarea>
