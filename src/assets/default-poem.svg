@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img" aria-label="Abstract paper and ink illustration">
+  <rect width="1200" height="600" fill="#f5f1e8"/>
+  <path d="M0 450C210 360 300 470 470 405s290-120 430-25 200 30 300-35v255H0z" fill="#d9c7a8"/>
+  <path d="M160 110h420l80 80v250H160z" fill="#fffdf8" stroke="#8d7355" stroke-width="8"/>
+  <path d="M580 110v80h80M230 260h280M230 315h210M230 370h245" fill="none" stroke="#b79d79" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="960" cy="180" r="72" fill="#b45309" opacity=".85"/>
+</svg>

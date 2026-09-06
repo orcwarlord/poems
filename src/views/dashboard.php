@@ -57,7 +57,7 @@
             <tr>
                 <th scope="col" class="px-6 py-4 font-semibold">Title</th>
                 <th scope="col" class="px-6 py-4 font-semibold">First line</th>
-                <th scope="col" class="px-6 py-4 font-semibold">Created</th>
+                <th scope="col" class="px-6 py-4 font-semibold">Written</th>
                 <th scope="col" class="px-6 py-4 text-right font-semibold">Actions</th>
             </tr>
         </thead>
@@ -80,7 +80,7 @@
                     <span class="block truncate"><?= e($firstLine) ?></span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-5 text-stone-400">
-                    <time datetime="<?= e($poem['created_at']) ?>"><?= date('M j, Y', strtotime($poem['created_at'])) ?></time>
+                    <time datetime="<?= e($poem['written_date']) ?>"><?= date('M j, Y', strtotime($poem['written_date'])) ?></time>
                 </td>
                 <td class="whitespace-nowrap px-6 py-5 text-right text-xs">
                     <a href="/poems/view.php?id=<?= $poem['id'] ?>" class="px-2 py-1 text-stone-500 hover:text-stone-800 transition-colors">View</a>

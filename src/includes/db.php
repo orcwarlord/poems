@@ -27,6 +27,57 @@ function get_db(): PDO
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 ]
             );
+            $columnExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.columns
+                 WHERE table_schema = DATABASE() AND table_name = 'poems' AND column_name = 'description'"
+            )->fetchColumn();
+            if ((int) $columnExists === 0) {
+                $pdo->exec('ALTER TABLE poems ADD COLUMN description MEDIUMTEXT NOT NULL AFTER title');
+            }
+            $writtenDateExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.columns
+                 WHERE table_schema = DATABASE() AND table_name = 'poems' AND column_name = 'written_date'"
+            )->fetchColumn();
+            if ((int) $writtenDateExists === 0) {
+                $pdo->exec('ALTER TABLE poems ADD COLUMN written_date DATE NULL AFTER title');
+                $pdo->exec('UPDATE poems SET written_date = DATE(created_at) WHERE written_date IS NULL');
+                $pdo->exec('ALTER TABLE poems MODIFY COLUMN written_date DATE NOT NULL');
+            }
+            $pdo->exec(
+                'CREATE TABLE IF NOT EXISTS photo_assets (
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    original_path VARCHAR(255) NOT NULL,
+                    thumbnail_path VARCHAR(255) NOT NULL,
+                    original_name VARCHAR(255) NOT NULL,
+                    title VARCHAR(255) NOT NULL,
+                    alt_text VARCHAR(255) NOT NULL,
+                    is_default BOOLEAN NOT NULL DEFAULT FALSE,
+                    mime_type VARCHAR(50) NOT NULL,
+                    width INT UNSIGNED NOT NULL,
+                    height INT UNSIGNED NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+            );
+            foreach (['title', 'alt_text', 'is_default'] as $photoColumn) {
+                $photoColumnExists = $pdo->prepare(
+                    "SELECT COUNT(*) FROM information_schema.columns
+                     WHERE table_schema = DATABASE() AND table_name = 'photo_assets' AND column_name = :column_name"
+                );
+                $photoColumnExists->execute(['column_name' => $photoColumn]);
+                if ((int) $photoColumnExists->fetchColumn() === 0) {
+                    $definition = $photoColumn === 'is_default'
+                        ? 'BOOLEAN NOT NULL DEFAULT FALSE'
+                        : "VARCHAR(255) NOT NULL DEFAULT ''";
+                    $pdo->exec("ALTER TABLE photo_assets ADD COLUMN {$photoColumn} {$definition} AFTER original_name");
+                }
+            }
+            $photoColumnExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.columns
+                 WHERE table_schema = DATABASE() AND table_name = 'poems' AND column_name = 'photo_id'"
+            )->fetchColumn();
+            if ((int) $photoColumnExists === 0) {
+                $pdo->exec('ALTER TABLE poems ADD COLUMN photo_id INT UNSIGNED NULL AFTER content');
+            }
         } catch (Throwable $e) {
             http_response_code(503);
             exit('Database unavailable.');

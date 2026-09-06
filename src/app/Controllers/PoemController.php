@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 class PoemController
 {
-    public function __construct(private Poem $poems, private Category $categories)
+    public function __construct(private Poem $poems, private Category $categories, private Photo $photos)
     {
     }
 
@@ -25,14 +25,24 @@ class PoemController
 
     public function create(): void
     {
-        $poem = ['title' => '', 'content' => '', 'categories' => []];
+        $poem = [
+            'title' => '',
+            'written_date' => date('Y-m-d'),
+            'description' => '',
+            'content' => '',
+            'photo_id' => null,
+            'photo_name' => '',
+            'photo_title' => '',
+            'photo_alt_text' => '',
+            'categories' => [],
+        ];
         $errors = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             [$poem, $errors] = $this->formData();
 
             if ($errors === []) {
-                $this->poems->create($poem['title'], $poem['content'], $poem['categoryIds']);
+                $this->poems->create($poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $poem['categoryIds']);
                 flash('success', 'Your poem has been saved.');
                 header('Location: /');
                 exit;
@@ -45,6 +55,7 @@ class PoemController
             'submitLabel' => 'Save poem',
             'cancelUrl' => '/',
             'poem' => $poem,
+            'photos' => $this->photos->all(),
             'categories' => $this->categories->all(),
             'errors' => $errors,
         ]);
@@ -68,11 +79,17 @@ class PoemController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             [$formData, $errors] = $this->formData();
             $poem['title'] = $formData['title'];
+            $poem['written_date'] = $formData['written_date'];
+            $poem['description'] = $formData['description'];
             $poem['content'] = $formData['content'];
+            $poem['photo_id'] = $formData['photo_id'];
+            $poem['photo_name'] = $formData['photo_name'];
+            $poem['photo_title'] = $formData['photo_title'];
+            $poem['photo_alt_text'] = $formData['photo_alt_text'];
             $poem['categories'] = $formData['categories'];
 
             if ($errors === []) {
-                $this->poems->update($id, $poem['title'], $poem['content'], $formData['categoryIds']);
+                $this->poems->update($id, $poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $formData['categoryIds']);
                 flash('success', 'Your poem has been updated.');
                 header('Location: /poems/view.php?id=' . $id);
                 exit;
@@ -85,6 +102,7 @@ class PoemController
             'submitLabel' => 'Save changes',
             'cancelUrl' => '/poems/view.php?id=' . $id,
             'poem' => $poem,
+            'photos' => $this->photos->all(),
             'categories' => $this->categories->all(),
             'errors' => $errors,
         ]);
@@ -112,7 +130,13 @@ class PoemController
     {
         $poem = [
             'title' => trim((string) ($_POST['title'] ?? '')),
+            'written_date' => trim((string) ($_POST['written_date'] ?? '')),
+            'description' => sanitize_html(trim((string) ($_POST['description'] ?? ''))),
             'content' => sanitize_html(trim((string) ($_POST['content'] ?? ''))),
+            'photo_id' => null,
+            'photo_name' => trim((string) ($_POST['photo_name'] ?? '')),
+            'photo_title' => trim((string) ($_POST['photo_title'] ?? '')),
+            'photo_alt_text' => trim((string) ($_POST['photo_alt_text'] ?? '')),
         ];
         $categoryIds = array_values(array_unique(array_filter(array_map(
             'intval',
@@ -120,6 +144,36 @@ class PoemController
         ), static fn (int $id): bool => $id > 0)));
         $categories = [];
         $errors = [];
+
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $poem['written_date']);
+        if ($date === false || $date->format('Y-m-d') !== $poem['written_date']) {
+            $errors[] = 'A valid written date is required.';
+            flash('error', 'A valid written date is required.');
+        }
+
+        $selectedPhotoId = (int) ($_POST['photo_id'] ?? 0);
+        if ($selectedPhotoId > 0) {
+            if (!$this->photos->exists($selectedPhotoId)) {
+                $errors[] = 'The selected photo could not be found.';
+                flash('error', 'The selected photo could not be found.');
+            } else {
+                $poem['photo_id'] = $selectedPhotoId;
+            }
+        }
+
+        if (isset($_FILES['photo']) && ($_FILES['photo']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+            try {
+                $filename = basename((string) $_FILES['photo']['name']);
+                $poem['photo_name'] = $poem['photo_name'] !== '' ? $poem['photo_name'] : $filename;
+                if ($poem['photo_title'] === '' || $poem['photo_alt_text'] === '') {
+                    throw new RuntimeException('Image title and alt text are required for a new upload.');
+                }
+                $poem['photo_id'] = $this->photos->store($_FILES['photo'], $poem['photo_name'], $poem['photo_title'], $poem['photo_alt_text']);
+            } catch (Throwable $exception) {
+                $errors[] = $exception->getMessage();
+                flash('error', $exception->getMessage());
+            }
+        }
 
         foreach ($categoryIds as $categoryId) {
             if (!$this->categories->exists($categoryId)) {

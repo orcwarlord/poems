@@ -11,14 +11,30 @@ class Poem
     public function all(): array
     {
         return $this->db->query(
-            'SELECT id, title, content, created_at FROM poems ORDER BY created_at DESC'
+                'SELECT p.id, p.title, p.written_date, p.description, p.content, p.photo_id,
+                    COALESCE(pa.thumbnail_path, dp.thumbnail_path) AS photo_thumbnail_path,
+                    COALESCE(pa.original_name, dp.original_name) AS photo_original_name,
+                    COALESCE(pa.title, dp.title) AS photo_title,
+                    COALESCE(pa.alt_text, dp.alt_text) AS photo_alt_text, p.created_at
+             FROM poems p LEFT JOIN photo_assets pa ON pa.id = p.photo_id
+                 LEFT JOIN photo_assets dp ON dp.is_default = TRUE
+             ORDER BY p.created_at DESC'
         )->fetchAll();
     }
 
     public function find(int $id): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT id, title, content, created_at, updated_at FROM poems WHERE id = :id'
+                'SELECT p.id, p.title, p.written_date, p.description, p.content, p.photo_id,
+                    COALESCE(pa.original_path, dp.original_path) AS photo_original_path,
+                    COALESCE(pa.thumbnail_path, dp.thumbnail_path) AS photo_thumbnail_path,
+                    COALESCE(pa.original_name, dp.original_name) AS photo_original_name,
+                    COALESCE(pa.title, dp.title) AS photo_title,
+                    COALESCE(pa.alt_text, dp.alt_text) AS photo_alt_text,
+                    p.created_at, p.updated_at
+             FROM poems p LEFT JOIN photo_assets pa ON pa.id = p.photo_id
+                 LEFT JOIN photo_assets dp ON dp.is_default = TRUE
+             WHERE p.id = :id'
         );
         $stmt->execute(['id' => $id]);
         $poem = $stmt->fetch();
@@ -30,13 +46,20 @@ class Poem
         return $poem === false ? null : $poem;
     }
 
-    public function create(string $title, string $content, array $categoryIds = []): int
+    public function create(string $title, string $writtenDate, string $description, string $content, ?int $photoId, array $categoryIds = []): int
     {
         $this->db->beginTransaction();
         $stmt = $this->db->prepare(
-            'INSERT INTO poems (title, content) VALUES (:title, :content)'
+            'INSERT INTO poems (title, written_date, description, content, photo_id)
+             VALUES (:title, :written_date, :description, :content, :photo_id)'
         );
-        $stmt->execute(['title' => $title, 'content' => $content]);
+        $stmt->execute([
+            'title' => $title,
+            'written_date' => $writtenDate,
+            'description' => $description,
+            'content' => $content,
+            'photo_id' => $photoId,
+        ]);
         $id = (int) $this->db->lastInsertId();
         $this->syncCategories($id, $categoryIds);
         $this->db->commit();
@@ -44,13 +67,21 @@ class Poem
         return $id;
     }
 
-    public function update(int $id, string $title, string $content, array $categoryIds = []): bool
+    public function update(int $id, string $title, string $writtenDate, string $description, string $content, ?int $photoId, array $categoryIds = []): bool
     {
         $this->db->beginTransaction();
         $stmt = $this->db->prepare(
-            'UPDATE poems SET title = :title, content = :content WHERE id = :id'
+            'UPDATE poems SET title = :title, written_date = :written_date, description = :description, content = :content,
+             photo_id = :photo_id WHERE id = :id'
         );
-        $stmt->execute(['title' => $title, 'content' => $content, 'id' => $id]);
+        $stmt->execute([
+            'title' => $title,
+            'written_date' => $writtenDate,
+            'description' => $description,
+            'content' => $content,
+            'photo_id' => $photoId,
+            'id' => $id,
+        ]);
         $this->syncCategories($id, $categoryIds);
         $this->db->commit();
 
