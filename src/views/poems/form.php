@@ -1,5 +1,8 @@
 <?php
-$editing = $heading === 'Edit Poem';
+$isNew = $isNew ?? false;
+$editing = !$isNew;
+$versionSource = $versionSource ?? null;
+$versionCandidates = $versionCandidates ?? [];
 $useEditor = true;
 $editorContent = $poem['content'];
 $descriptionEditorContent = $poem['description'];
@@ -16,7 +19,12 @@ require_once __DIR__ . '/../../includes/header.php';
 </nav>
 
 <div class="mx-auto max-w-3xl">
-    <h1 class="mb-8 font-display text-4xl text-stone-900"><?= e($heading) ?></h1>
+    <div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <h1 class="font-display text-4xl text-stone-900"><?= e($heading) ?></h1>
+        <?php if ($editing): ?>
+        <a href="/poems/create.php?version_of=<?= $poem['id'] ?>" class="rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100 transition-colors">Create version</a>
+        <?php endif; ?>
+    </div>
 
     <form method="post" id="poem-form" class="space-y-6" enctype="multipart/form-data" novalidate>
         <div>
@@ -28,6 +36,19 @@ require_once __DIR__ . '/../../includes/header.php';
             <label for="written_date" class="mb-1.5 block text-sm font-medium text-stone-700">Written Date <span class="text-red-500" aria-hidden="true">*</span></label>
             <input type="date" id="written_date" name="written_date" required value="<?= e($poem['written_date']) ?>" class="w-full rounded-md border border-stone-300 bg-white px-4 py-2.5 text-stone-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors">
         </div>
+
+        <?php if ($isNew): ?>
+        <div>
+            <label for="parent_poem_id" class="mb-1.5 block text-sm font-medium text-stone-700">Version</label>
+            <select id="parent_poem_id" name="parent_poem_id" onchange="if (this.value !== '0') window.location.href = '/poems/create.php?version_of=' + encodeURIComponent(this.value);" class="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-700 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                <option value="0">Original poem</option>
+                <?php foreach ($versionCandidates as $candidate): ?>
+                <option value="<?= $candidate['id'] ?>" <?= (int) ($poem['parent_poem_id'] ?? 0) === (int) $candidate['id'] ? 'selected' : '' ?>>Version of: <?= e($candidate['title']) ?> (<?= e($candidate['written_date']) ?>)</option>
+                <?php endforeach; ?>
+            </select>
+            <p class="mt-1.5 text-xs text-stone-400">Choose an original to link this poem as a new publication version.</p>
+        </div>
+        <?php endif; ?>
 
         <div>
             <label class="mb-1.5 block text-sm font-medium text-stone-700">Description</label>

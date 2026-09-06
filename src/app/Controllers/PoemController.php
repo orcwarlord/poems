@@ -25,39 +25,63 @@ class PoemController
 
     public function create(): void
     {
+        $versionSource = null;
+        $versionSourceId = filter_input(INPUT_GET, 'version_of', FILTER_VALIDATE_INT);
+        if ($versionSourceId !== false && $versionSourceId !== null && $versionSourceId > 0) {
+            $versionSource = $this->findOrFail($versionSourceId);
+        }
+
         $poem = [
             'title' => '',
             'written_date' => date('Y-m-d'),
             'description' => '',
             'content' => '',
+            'parent_poem_id' => null,
             'photo_id' => null,
             'photo_name' => '',
             'photo_title' => '',
             'photo_alt_text' => '',
             'categories' => [],
         ];
+        if ($versionSource !== null) {
+            $poem['title'] = $versionSource['title'];
+            $poem['written_date'] = $versionSource['written_date'];
+            $poem['description'] = $versionSource['description'];
+            $poem['content'] = $versionSource['content'];
+            $poem['parent_poem_id'] = $versionSource['id'];
+            $poem['photo_id'] = $versionSource['photo_id'];
+            $poem['photo_name'] = $versionSource['photo_original_name'] ?? '';
+            $poem['photo_title'] = $versionSource['photo_title'] ?? '';
+            $poem['photo_alt_text'] = $versionSource['photo_alt_text'] ?? '';
+            $poem['categories'] = $versionSource['categories'];
+        }
         $errors = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            [$poem, $errors] = $this->formData();
+            $parentPoemId = (int) ($_POST['parent_poem_id'] ?? 0);
+            [$poem, $errors] = $this->formData($parentPoemId > 0 ? $parentPoemId : null);
 
             if ($errors === []) {
-                $this->poems->create($poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $poem['categoryIds']);
+                $this->poems->create($poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $poem['parent_poem_id'], $poem['categoryIds']);
                 flash('success', 'Your poem has been saved.');
                 header('Location: /');
                 exit;
             }
+            $versionSource = $poem['parent_poem_id'] === null ? null : $this->poems->find($poem['parent_poem_id']);
         }
 
         render('poems/form', [
-            'pageTitle' => 'New Poem',
-            'heading' => 'New Poem',
-            'submitLabel' => 'Save poem',
+            'pageTitle' => $versionSource === null ? 'New Poem' : 'New Poem Version',
+            'heading' => $versionSource === null ? 'New Poem' : 'New Poem Version',
+            'submitLabel' => $versionSource === null ? 'Save poem' : 'Save version',
             'cancelUrl' => '/',
             'poem' => $poem,
             'photos' => $this->photos->all(),
             'categories' => $this->categories->all(),
             'errors' => $errors,
+            'isNew' => true,
+            'versionSource' => $versionSource,
+            'versionCandidates' => $this->poems->all(),
         ]);
     }
 
@@ -77,7 +101,7 @@ class PoemController
         $errors = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            [$formData, $errors] = $this->formData();
+            [$formData, $errors] = $this->formData(null, $poem['photo_id'] === null ? null : (int) $poem['photo_id']);
             $poem['title'] = $formData['title'];
             $poem['written_date'] = $formData['written_date'];
             $poem['description'] = $formData['description'];
@@ -126,14 +150,15 @@ class PoemController
         exit;
     }
 
-    private function formData(): array
+    private function formData(?int $parentPoemId = null, ?int $existingPhotoId = null): array
     {
         $poem = [
             'title' => trim((string) ($_POST['title'] ?? '')),
             'written_date' => trim((string) ($_POST['written_date'] ?? '')),
             'description' => sanitize_html(trim((string) ($_POST['description'] ?? ''))),
             'content' => sanitize_html(trim((string) ($_POST['content'] ?? ''))),
-            'photo_id' => null,
+            'parent_poem_id' => $parentPoemId,
+            'photo_id' => $existingPhotoId,
             'photo_name' => trim((string) ($_POST['photo_name'] ?? '')),
             'photo_title' => trim((string) ($_POST['photo_title'] ?? '')),
             'photo_alt_text' => trim((string) ($_POST['photo_alt_text'] ?? '')),
@@ -144,6 +169,12 @@ class PoemController
         ), static fn (int $id): bool => $id > 0)));
         $categories = [];
         $errors = [];
+
+        if ($parentPoemId !== null && $this->poems->find($parentPoemId) === null) {
+            $poem['parent_poem_id'] = null;
+            $errors[] = 'The original poem for this version could not be found.';
+            flash('error', 'The original poem for this version could not be found.');
+        }
 
         $date = DateTimeImmutable::createFromFormat('!Y-m-d', $poem['written_date']);
         if ($date === false || $date->format('Y-m-d') !== $poem['written_date']) {

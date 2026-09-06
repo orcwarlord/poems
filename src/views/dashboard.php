@@ -56,6 +56,7 @@
         <thead class="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-widest text-stone-400">
             <tr>
                 <th scope="col" class="px-6 py-4 font-semibold">Title</th>
+                <th scope="col" class="px-6 py-4 font-semibold">Version</th>
                 <th scope="col" class="px-6 py-4 font-semibold">First line</th>
                 <th scope="col" class="px-6 py-4 font-semibold">Written</th>
                 <th scope="col" class="px-6 py-4 text-right font-semibold">Actions</th>
@@ -73,9 +74,10 @@
                 $firstLine = trim($lines[0] ?? '');
             ?>
             <tr class="group hover:bg-amber-50/40">
-                <th scope="row" class="max-w-[15rem] px-6 py-5 font-display text-lg font-normal text-stone-900">
+                <th scope="row" class="max-w-[15rem] px-6 py-5 font-display text-lg font-normal text-stone-900 <?= $poem['depth'] > 0 ? 'border-l-2 border-amber-200 pl-10' : '' ?>">
                     <a href="/poems/view.php?id=<?= $poem['id'] ?>" class="block truncate hover:text-amber-700 transition-colors"><?= e($poem['title']) ?></a>
                 </th>
+                <td class="whitespace-nowrap px-6 py-5 text-xs font-semibold uppercase tracking-wider text-amber-700">Version <?= $poem['version_number'] ?></td>
                 <td class="max-w-[24rem] px-6 py-5 text-stone-500">
                     <span class="block truncate"><?= e($firstLine) ?></span>
                 </td>

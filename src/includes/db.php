@@ -78,6 +78,21 @@ function get_db(): PDO
             if ((int) $photoColumnExists === 0) {
                 $pdo->exec('ALTER TABLE poems ADD COLUMN photo_id INT UNSIGNED NULL AFTER content');
             }
+            $parentPoemExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.columns
+                 WHERE table_schema = DATABASE() AND table_name = 'poems' AND column_name = 'parent_poem_id'"
+            )->fetchColumn();
+            if ((int) $parentPoemExists === 0) {
+                $pdo->exec('ALTER TABLE poems ADD COLUMN parent_poem_id INT UNSIGNED NULL AFTER content');
+            }
+            $parentForeignKeyExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.table_constraints
+                 WHERE table_schema = DATABASE() AND table_name = 'poems'
+                 AND constraint_name = 'fk_poems_parent' AND constraint_type = 'FOREIGN KEY'"
+            )->fetchColumn();
+            if ((int) $parentForeignKeyExists === 0) {
+                $pdo->exec('ALTER TABLE poems ADD CONSTRAINT fk_poems_parent FOREIGN KEY (parent_poem_id) REFERENCES poems (id) ON DELETE SET NULL');
+            }
         } catch (Throwable $e) {
             http_response_code(503);
             exit('Database unavailable.');
