@@ -55,18 +55,19 @@ $_error   = get_flash('error');
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <?php endif; ?>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwUEQp1Z5BSvM/9U4uM0ZxjGwTxPNa7d3B5K7nMhG0nS3xTQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="/assets/app.css">
 </head>
-<body class="min-h-screen bg-[#fffff0] font-sans text-stone-900 antialiased">
+<body class="flex min-h-screen flex-col bg-[#fffff0] font-sans text-stone-900 antialiased">
 
 <!-- ── Navigation ──────────────────────────────────────────────────────────── -->
 <nav class="sticky top-0 z-20 border-b border-stone-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-    <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-6 lg:px-10">
+    <div class="mx-auto flex h-14 max-w-[1920px] items-center justify-between px-6 lg:px-10">
         <a href="/" class="flex items-center gap-2 group">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
             </svg>
-            <span class="font-display text-lg font-semibold text-stone-800 group-hover:text-amber-700 transition-colors">Verse Library</span>
+            <span class="font-display text-lg font-semibold text-stone-800 group-hover:text-amber-700 transition-colors">Alison's Poetry</span>
         </a>
 
         <a href="/poems/create.php"
@@ -77,6 +78,8 @@ $_error   = get_flash('error');
             New Poem
         </a>
         <a href="/images/" class="text-sm font-semibold text-stone-600 hover:text-amber-700">Manage Images</a>
+        <a href="/publishers/" class="text-sm font-semibold text-stone-600 hover:text-amber-700">Publishers</a>
+        <a href="/submissions/" class="text-sm font-semibold text-stone-600 hover:text-amber-700">Submissions</a>
     </div>
 </nav>
 
@@ -93,4 +96,4 @@ $_error   = get_flash('error');
 <?php endif; ?>
 
 <!-- ── Page content ────────────────────────────────────────────────────────── -->
-<main class="mx-auto max-w-6xl px-6 py-10 lg:px-10">
+<main class="mx-auto w-full max-w-[1920px] flex-1 px-6 py-10 lg:px-10">

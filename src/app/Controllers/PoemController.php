@@ -4,14 +4,21 @@ declare(strict_types=1);
 
 class PoemController
 {
-    public function __construct(private Poem $poems, private Category $categories, private Photo $photos)
-    {
+    public function __construct(
+        private Poem $poems,
+        private Category $categories,
+        private Photo $photos,
+        private Submission $submissions,
+        private Publisher $publishers
+    ) {
     }
 
     public function index(): void
     {
         $poems = $this->poems->all();
         $categories = $this->categories->all();
+        $publishers = $this->publishers->all();
+        $submissions = $this->submissions->all();
 
         render('dashboard', [
             'pageTitle' => 'Dashboard',
@@ -20,6 +27,8 @@ class PoemController
             'latestDate' => $poems[0]['created_at'] ?? null,
             'categories' => $categories,
             'totalCategories' => count($categories),
+            'publishers' => $publishers,
+            'submissions' => $submissions,
         ]);
     }
 

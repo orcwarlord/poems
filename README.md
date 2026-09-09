@@ -19,7 +19,9 @@ Open <http://localhost:8080>. The response reports the PHP version and MySQL con
 The application follows a small MVC layout:
 
 - `src/app/Models/Poem.php` contains poem queries and persistence.
+- `src/app/Models/Publisher.php` contains publisher queries and persistence.
 - `src/app/Controllers/PoemController.php` handles requests, validation, and redirects.
+- `src/app/Controllers/PublisherController.php` handles publisher requests, validation, and redirects.
 - `src/views/` contains dashboard, form, and poem detail templates.
 - `src/index.php` and `src/poems/*.php` are thin route entry points.
 

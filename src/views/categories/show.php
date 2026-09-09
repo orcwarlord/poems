@@ -8,7 +8,7 @@
     <header class="mb-8 border-b border-stone-200 pb-6">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-600">Category</p>
         <h1 class="mt-3 font-display text-4xl leading-tight text-stone-900 sm:text-5xl"><?= e($category['name']) ?></h1>
-        <p class="mt-2 text-sm text-stone-400">Created <?= date('F j, Y', strtotime($category['created_at'])) ?></p>
+        <p class="mt-2 text-sm text-stone-500">Created <?= date('F j, Y', strtotime($category['created_at'])) ?></p>
     </header>
 
     <footer class="mt-10 flex items-center justify-end gap-3 border-t border-stone-100 pt-5">
