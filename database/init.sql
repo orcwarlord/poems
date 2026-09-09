@@ -38,6 +38,45 @@ CREATE TABLE IF NOT EXISTS categories (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS publishers (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact VARCHAR(255) NULL,
+    url VARCHAR(2048) NULL,
+    telephone VARCHAR(50) NULL,
+    email VARCHAR(255) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS publisher_contacts (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    publisher_id INT UNSIGNED NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NULL,
+    telephone VARCHAR(50) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_publisher_contacts_publisher FOREIGN KEY (publisher_id) REFERENCES publishers (id) ON DELETE CASCADE
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS submissions (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    poem_id INT UNSIGNED NOT NULL,
+    publisher_id INT UNSIGNED NULL,
+    publisher_name VARCHAR(255) NULL,
+    publisher_contact_name VARCHAR(255) NULL,
+    publisher_contact_id INT UNSIGNED NULL,
+    call_name VARCHAR(255) NOT NULL,
+    submission_url VARCHAR(2048) NULL,
+    closing_date DATE NOT NULL,
+    submitted_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_submissions_poem FOREIGN KEY (poem_id) REFERENCES poems (id) ON DELETE CASCADE,
+    CONSTRAINT fk_submissions_publisher FOREIGN KEY (publisher_id) REFERENCES publishers (id) ON DELETE SET NULL,
+    CONSTRAINT fk_submissions_contact FOREIGN KEY (publisher_contact_id) REFERENCES publisher_contacts (id) ON DELETE SET NULL
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS poem_categories (
     poem_id INT UNSIGNED NOT NULL,
     category_id INT UNSIGNED NOT NULL,

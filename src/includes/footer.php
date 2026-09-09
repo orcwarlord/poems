@@ -10,6 +10,28 @@
 ?>
 </main><!-- /main -->
 
+<?php
+$footerSummaryTotal = $footerSummaryTotal ?? null;
+$footerSummaryLatest = $footerSummaryLatest ?? null;
+?>
+
+<footer class="mt-auto border-t border-stone-200 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70">
+    <div class="mx-auto flex max-w-[1920px] items-center justify-end gap-6 px-6 py-4 text-sm text-stone-500 lg:px-10">
+        <?php if ($footerSummaryTotal !== null): ?>
+            <div class="flex items-baseline gap-2">
+                <span class="text-[10px] font-medium uppercase tracking-[0.18em] text-stone-400">Poems</span>
+                <span class="font-display text-xl font-medium text-stone-500"><?= e((string) $footerSummaryTotal) ?></span>
+            </div>
+        <?php endif; ?>
+        <?php if ($footerSummaryLatest !== null): ?>
+            <div class="flex items-baseline gap-2">
+                <span class="text-[10px] font-medium uppercase tracking-[0.18em] text-stone-400">Latest</span>
+                <span class="font-medium text-stone-500"><?= e((string) $footerSummaryLatest) ?></span>
+            </div>
+        <?php endif; ?>
+    </div>
+</footer>
+
 <?php if (!empty($useEditor)): ?>
 <!-- ── Quill rich-text editor ──────────────────────────────────────────────── -->
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>

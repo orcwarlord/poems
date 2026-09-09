@@ -93,6 +93,27 @@ function get_db(): PDO
             if ((int) $parentForeignKeyExists === 0) {
                 $pdo->exec('ALTER TABLE poems ADD CONSTRAINT fk_poems_parent FOREIGN KEY (parent_poem_id) REFERENCES poems (id) ON DELETE SET NULL');
             }
+            $submissionPublisherNameExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.columns
+                 WHERE table_schema = DATABASE() AND table_name = 'submissions' AND column_name = 'publisher_name'"
+            )->fetchColumn();
+            if ((int) $submissionPublisherNameExists === 0) {
+                $pdo->exec('ALTER TABLE submissions ADD COLUMN publisher_name VARCHAR(255) NULL AFTER publisher_id');
+            }
+            $submissionContactNameExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.columns
+                 WHERE table_schema = DATABASE() AND table_name = 'submissions' AND column_name = 'publisher_contact_name'"
+            )->fetchColumn();
+            if ((int) $submissionContactNameExists === 0) {
+                $pdo->exec('ALTER TABLE submissions ADD COLUMN publisher_contact_name VARCHAR(255) NULL AFTER publisher_name');
+            }
+            $submissionContactIdExists = $pdo->query(
+                "SELECT COUNT(*) FROM information_schema.columns
+                 WHERE table_schema = DATABASE() AND table_name = 'submissions' AND column_name = 'publisher_contact_id'"
+            )->fetchColumn();
+            if ((int) $submissionContactIdExists === 0) {
+                $pdo->exec('ALTER TABLE submissions ADD COLUMN publisher_contact_id INT UNSIGNED NULL AFTER publisher_contact_name');
+            }
         } catch (Throwable $e) {
             http_response_code(503);
             exit('Database unavailable.');

@@ -67,6 +67,7 @@ class Poem
             $poem['categories'] = $this->categoriesFor($id);
             $poem['version_number'] = $this->versionNumber($id);
             $poem['versions'] = $this->versionsFor($id);
+            $poem['submissions'] = $this->submissionsFor($id);
         }
 
         return $poem === false ? null : $poem;
@@ -141,6 +142,22 @@ class Poem
         unset($version);
 
         return $versions;
+    }
+
+    private function submissionsFor(int $poemId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT s.id, s.call_name, s.submission_url, s.closing_date, s.submitted_date,
+                    COALESCE(pub.name, s.publisher_name) AS publisher_name,
+                    COALESCE(pc.name, s.publisher_contact_name) AS contact_name
+             FROM submissions s
+             LEFT JOIN publishers pub ON pub.id = s.publisher_id
+             LEFT JOIN publisher_contacts pc ON pc.id = s.publisher_contact_id
+             WHERE s.poem_id = :poem_id ORDER BY s.closing_date ASC'
+        );
+        $stmt->execute(['poem_id' => $poemId]);
+
+        return $stmt->fetchAll();
     }
 
     private function versionNumber(int $poemId): int
