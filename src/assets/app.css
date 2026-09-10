@@ -13,6 +13,36 @@ body {
     color: var(--pfl-dkgr) !important;
 }
 
+nav[aria-label="Breadcrumb"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--pfl-midgr);
+}
+
+nav[aria-label="Breadcrumb"] a {
+    color: var(--pfl-midgr);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+nav[aria-label="Breadcrumb"] a:hover {
+    color: var(--pfl-green);
+}
+
+nav[aria-label="Breadcrumb"] span {
+    color: var(--pfl-midgr);
+}
+
+nav[aria-label="Breadcrumb"] [aria-current="page"] {
+    color: var(--pfl-dkgr) !important;
+    font-weight: 600;
+}
+
 /* Keep the existing utility markup while applying the PFL palette globally. */
 [class~="text-stone-900"], [class~="text-stone-800"], [class~="text-stone-700"] {
     color: var(--pfl-dkgr) !important;

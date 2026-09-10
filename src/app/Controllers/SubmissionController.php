@@ -13,6 +13,20 @@ class SubmissionController
         render('submissions/index', ['pageTitle' => 'Submissions', 'submissions' => $this->submissions->all()]);
     }
 
+    public function show(?int $id): void
+    {
+        $submission = $this->findOrFail($id);
+        $poem = $this->poems->find((int) $submission['poem_id']);
+        $publisher = $submission['publisher_id'] !== null ? $this->publishers->find((int) $submission['publisher_id']) : null;
+
+        render('submissions/show', [
+            'pageTitle' => $submission['call_name'],
+            'submission' => $submission,
+            'poem' => $poem,
+            'publisher' => $publisher,
+        ]);
+    }
+
     public function create(): void
     {
         $submission = $this->emptySubmission();

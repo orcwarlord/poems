@@ -77,6 +77,7 @@ $_error   = get_flash('error');
             </svg>
             New Poem
         </a>
+        <a href="/volumes/" class="text-sm font-semibold text-stone-600 hover:text-amber-700">Volumes</a>
         <a href="/images/" class="text-sm font-semibold text-stone-600 hover:text-amber-700">Manage Images</a>
         <a href="/publishers/" class="text-sm font-semibold text-stone-600 hover:text-amber-700">Publishers</a>
         <a href="/submissions/" class="text-sm font-semibold text-stone-600 hover:text-amber-700">Submissions</a>

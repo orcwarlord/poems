@@ -1,6 +1,12 @@
 <?php require_once __DIR__ . '/../../includes/header.php'; ?>
 
-<nav class="mb-7"><a href="<?= e($cancelUrl) ?>" class="inline-flex text-sm text-stone-500 hover:text-amber-700">&larr; Back</a></nav>
+<nav class="mb-7" aria-label="Breadcrumb">
+    <a href="/">Dashboard</a>
+    <span>/</span>
+    <a href="/submissions/">Submissions</a>
+    <span>/</span>
+    <span aria-current="page"><?= e($heading) ?></span>
+</nav>
 <div class="mx-auto max-w-3xl">
     <h1 class="mb-8 font-display text-4xl text-stone-900"><?= e($heading) ?></h1>
 

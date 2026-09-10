@@ -1,8 +1,13 @@
 <?php require_once __DIR__ . '/../../includes/header.php'; ?>
 
+<nav class="mb-7" aria-label="Breadcrumb">
+    <a href="/">Dashboard</a>
+    <span>/</span>
+    <span aria-current="page">Publishers</span>
+</nav>
+
 <header class="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-6">
     <div>
-        <a href="/" class="mb-3 inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-amber-700 transition-colors">&larr; Back to library</a>
         <h1 class="font-display text-4xl text-stone-900">Publishers</h1>
     </div>
     <a href="/publishers/create.php" class="inline-flex items-center gap-1.5 rounded-md bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 transition-colors">+ New publisher</a>
