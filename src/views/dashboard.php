@@ -10,7 +10,10 @@
             <h2 class="font-display text-2xl text-stone-700">Submissions</h2>
             <p class="mt-1 text-sm text-stone-500">Upcoming deadlines and recent calls</p>
         </div>
-        <a href="/submissions/" class="text-sm font-semibold text-amber-700 hover:text-amber-800 transition-colors">Manage submissions</a>
+        <div class="flex items-center gap-3">
+            <a href="/submissions/" class="text-sm font-semibold text-amber-700 hover:text-amber-800 transition-colors">Manage submissions</a>
+            <a href="/submissions/create.php" class="inline-flex items-center gap-1.5 rounded-md border border-amber-500 px-3 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-50 transition-colors">+ New submission</a>
+        </div>
     </div>
 
     <?php if ($submissions === []): ?>
@@ -104,7 +107,10 @@
         <h2 class="font-display text-2xl text-stone-700">Your poems</h2>
         <p class="mt-1 text-sm text-stone-500"><?= $total ?> <?= $total === 1 ? 'poem' : 'poems' ?> in your library</p>
     </div>
-    <a href="/poems/create.php" class="inline-flex items-center gap-1.5 rounded-md border border-amber-500 px-3 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-50 transition-colors">+ New poem</a>
+    <div class="flex items-center gap-3">
+        <a href="/poems/" class="text-sm font-semibold text-amber-700 hover:text-amber-800 transition-colors">Manage poems</a>
+        <a href="/poems/create.php" class="inline-flex items-center gap-1.5 rounded-md border border-amber-500 px-3 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-50 transition-colors">+ New poem</a>
+    </div>
 </div>
 
 <div class="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm">

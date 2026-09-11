@@ -35,6 +35,18 @@ class PoemController
         ]);
     }
 
+    public function list(): void
+    {
+        $poems = $this->poems->all();
+
+        render('poems/index', [
+            'pageTitle' => 'Poems',
+            'poems' => $poems,
+            'total' => count($poems),
+            'latestDate' => $poems[0]['created_at'] ?? null,
+        ]);
+    }
+
     public function create(): void
     {
         $versionSource = null;
@@ -54,6 +66,7 @@ class PoemController
             'photo_title' => '',
             'photo_alt_text' => '',
             'categories' => [],
+            'volumes' => [],
         ];
         if ($versionSource !== null) {
             $poem['title'] = $versionSource['title'];
@@ -66,6 +79,7 @@ class PoemController
             $poem['photo_title'] = $versionSource['photo_title'] ?? '';
             $poem['photo_alt_text'] = $versionSource['photo_alt_text'] ?? '';
             $poem['categories'] = $versionSource['categories'];
+            $poem['volumes'] = $versionSource['volumes'] ?? [];
         }
         $errors = [];
 
@@ -74,7 +88,7 @@ class PoemController
             [$poem, $errors] = $this->formData($parentPoemId > 0 ? $parentPoemId : null);
 
             if ($errors === []) {
-                $this->poems->create($poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $poem['parent_poem_id'], $poem['categoryIds']);
+                $this->poems->create($poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $poem['parent_poem_id'], $poem['categoryIds'], $poem['volumeIds']);
                 flash('success', 'Your poem has been saved.');
                 header('Location: /');
                 exit;
@@ -90,6 +104,7 @@ class PoemController
             'poem' => $poem,
             'photos' => $this->photos->all(),
             'categories' => $this->categories->all(),
+            'volumes' => (new Volume(get_db()))->all(),
             'errors' => $errors,
             'isNew' => true,
             'versionSource' => $versionSource,
@@ -123,9 +138,10 @@ class PoemController
             $poem['photo_title'] = $formData['photo_title'];
             $poem['photo_alt_text'] = $formData['photo_alt_text'];
             $poem['categories'] = $formData['categories'];
+            $poem['volumes'] = $formData['volumes'];
 
             if ($errors === []) {
-                $this->poems->update($id, $poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $formData['categoryIds']);
+                $this->poems->update($id, $poem['title'], $poem['written_date'], $poem['description'], $poem['content'], $poem['photo_id'], $formData['categoryIds'], $formData['volumeIds']);
                 flash('success', 'Your poem has been updated.');
                 header('Location: /poems/view.php?id=' . $id);
                 exit;
@@ -140,6 +156,7 @@ class PoemController
             'poem' => $poem,
             'photos' => $this->photos->all(),
             'categories' => $this->categories->all(),
+            'volumes' => (new Volume(get_db()))->all(),
             'errors' => $errors,
         ]);
     }
@@ -179,7 +196,12 @@ class PoemController
             'intval',
             (array) ($_POST['category_ids'] ?? [])
         ), static fn (int $id): bool => $id > 0)));
+        $volumeIds = array_values(array_unique(array_filter(array_map(
+            'intval',
+            (array) ($_POST['volume_ids'] ?? [])
+        ), static fn (int $id): bool => $id > 0)));
         $categories = [];
+        $volumes = [];
         $errors = [];
 
         if ($parentPoemId !== null && $this->poems->find($parentPoemId) === null) {
@@ -227,6 +249,16 @@ class PoemController
             $categories[] = $this->categories->find($categoryId);
         }
 
+        $volumeModel = new Volume(get_db());
+        foreach ($volumeIds as $volumeId) {
+            if ($volumeModel->find($volumeId) === null) {
+                $errors[] = 'One or more selected volumes could not be found.';
+                flash('error', 'One or more selected volumes could not be found.');
+                break;
+            }
+            $volumes[] = $volumeModel->find($volumeId);
+        }
+
         if ($poem['title'] === '' || $poem['content'] === '') {
             $errors[] = 'Both a title and content are required.';
             flash('error', 'Both a title and content are required.');
@@ -234,6 +266,8 @@ class PoemController
 
         $poem['categories'] = $categories;
         $poem['categoryIds'] = $categoryIds;
+        $poem['volumes'] = $volumes;
+        $poem['volumeIds'] = $volumeIds;
 
         return [$poem, $errors];
     }

@@ -7,6 +7,7 @@ $useEditor = true;
 $editorContent = $poem['content'];
 $descriptionEditorContent = $poem['description'];
 $selectedCategoryIds = array_map('intval', array_column($poem['categories'], 'id'));
+$selectedVolumeIds = array_map('intval', array_column($poem['volumes'] ?? [], 'id'));
 $selectedPhotoId = (int) ($poem['photo_id'] ?? 0);
 $photoName = $poem['photo_name'] ?? ($poem['photo_original_name'] ?? '');
 $photoTitle = $poem['photo_title'] ?? '';
@@ -90,6 +91,22 @@ require_once __DIR__ . '/../../includes/header.php';
             <div id="editor"></div>
             <textarea id="content" name="content" class="sr-only" aria-hidden="true" tabindex="-1"></textarea>
         </div>
+
+        <fieldset>
+            <legend class="mb-2 block text-sm font-medium text-stone-700">Volumes</legend>
+            <?php if ($volumes === []): ?>
+            <p class="text-sm text-stone-400">No volumes yet.</p>
+            <?php else: ?>
+            <div class="grid gap-2 sm:grid-cols-2">
+                <?php foreach ($volumes as $volume): ?>
+                <label class="flex cursor-pointer items-center gap-3 rounded-md border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700 hover:border-amber-300">
+                    <input type="checkbox" name="volume_ids[]" value="<?= (int) $volume['id'] ?>" class="h-4 w-4 accent-amber-500" <?= in_array((int) $volume['id'], $selectedVolumeIds, true) ? 'checked' : '' ?>>
+                    <?= e($volume['name']) ?>
+                </label>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </fieldset>
 
         <fieldset>
             <div class="mb-2 flex items-center justify-between gap-3">
