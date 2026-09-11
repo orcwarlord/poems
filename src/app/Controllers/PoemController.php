@@ -19,6 +19,7 @@ class PoemController
         $categories = $this->categories->all();
         $publishers = $this->publishers->all();
         $submissions = $this->submissions->all();
+        $volumes = (new Volume(get_db()))->all();
 
         render('dashboard', [
             'pageTitle' => 'Dashboard',
@@ -29,6 +30,8 @@ class PoemController
             'totalCategories' => count($categories),
             'publishers' => $publishers,
             'submissions' => $submissions,
+            'volumes' => $volumes,
+            'totalVolumes' => count($volumes),
         ]);
     }
 

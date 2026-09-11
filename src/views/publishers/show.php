@@ -1,7 +1,11 @@
 <?php require_once __DIR__ . '/../../includes/header.php'; ?>
 
 <nav class="mb-7" aria-label="Breadcrumb">
-    <a href="/publishers/" class="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-amber-700 transition-colors">&larr; Back to publishers</a>
+    <a href="/">Dashboard</a>
+    <span>/</span>
+    <a href="/publishers/">Publishers</a>
+    <span>/</span>
+    <span aria-current="page"><?= e($publisher['name']) ?></span>
 </nav>
 
 <article class="mx-auto max-w-3xl">

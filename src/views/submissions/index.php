@@ -1,7 +1,13 @@
 <?php require_once __DIR__ . '/../../includes/header.php'; ?>
 
+<nav class="mb-7" aria-label="Breadcrumb">
+    <a href="/">Dashboard</a>
+    <span>/</span>
+    <span aria-current="page">Submissions</span>
+</nav>
+
 <header class="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-6">
-    <div><a href="/" class="mb-3 inline-flex text-sm text-stone-500 hover:text-amber-700">&larr; Back to library</a><h1 class="font-display text-4xl text-stone-900">Submissions</h1></div>
+    <div><h1 class="font-display text-4xl text-stone-900">Submissions</h1></div>
     <a href="/submissions/create.php" class="rounded-md bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-600">+ New submission</a>
 </header>
 

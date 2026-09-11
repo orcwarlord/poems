@@ -9,11 +9,13 @@ require_once __DIR__ . '/Models/Publisher.php';
 require_once __DIR__ . '/Models/Photo.php';
 require_once __DIR__ . '/Models/Poem.php';
 require_once __DIR__ . '/Models/Submission.php';
+require_once __DIR__ . '/Models/Volume.php';
 require_once __DIR__ . '/Controllers/CategoryController.php';
 require_once __DIR__ . '/Controllers/PublisherController.php';
 require_once __DIR__ . '/Controllers/PoemController.php';
 require_once __DIR__ . '/Controllers/ImageController.php';
 require_once __DIR__ . '/Controllers/SubmissionController.php';
+require_once __DIR__ . '/Controllers/VolumeController.php';
 
 function normalise_url_value(string $value): string
 {
@@ -99,6 +101,17 @@ function submission_controller(): SubmissionController
 
     if ($controller === null) {
         $controller = new SubmissionController(new Submission(get_db()), new Poem(get_db()), new Publisher(get_db()));
+    }
+
+    return $controller;
+}
+
+function volume_controller(): VolumeController
+{
+    static $controller;
+
+    if ($controller === null) {
+        $controller = new VolumeController(new Volume(get_db()), new Poem(get_db()));
     }
 
     return $controller;

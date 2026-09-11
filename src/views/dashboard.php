@@ -164,7 +164,7 @@
 <?php endif; ?>
 
 <section class="mt-10">
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
             <div class="mb-4 flex items-baseline justify-between">
                 <div>
@@ -180,6 +180,29 @@
             <div class="flex flex-wrap gap-2">
                 <?php foreach ($categories as $category): ?>
                 <a href="/categories/view.php?id=<?= $category['id'] ?>" class="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm text-stone-600 shadow-sm hover:border-amber-300 hover:text-amber-700 transition-colors"><?= e($category['name']) ?></a>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+            <div class="mb-4 flex items-baseline justify-between">
+                <div>
+                    <h2 class="font-display text-2xl text-stone-700">Volumes</h2>
+                    <p class="mt-1 text-sm text-stone-500"><?= $totalVolumes ?> <?= $totalVolumes === 1 ? 'volume' : 'volumes' ?> in your library</p>
+                </div>
+                <a href="/volumes/" class="text-sm font-semibold text-amber-700 hover:text-amber-800 transition-colors">Manage</a>
+            </div>
+
+            <?php if (empty($volumes)): ?>
+            <div class="rounded-xl border border-dashed border-stone-200 bg-stone-50 px-6 py-8 text-center text-sm text-stone-500">No volumes yet. <a href="/volumes/create.php" class="font-semibold text-amber-700 hover:text-amber-800">Create one</a></div>
+            <?php else: ?>
+            <div class="max-h-56 space-y-2 overflow-y-auto pr-1">
+                <?php foreach ($volumes as $volume): ?>
+                <a href="/volumes/view.php?id=<?= $volume['id'] ?>" class="block rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-700 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700">
+                    <?= e($volume['name']) ?>
+                    <span class="mt-1 block text-[11px] text-stone-500"><?= (int) ($volume['poem_count'] ?? 0) ?> <?= ((int) ($volume['poem_count'] ?? 0)) === 1 ? 'poem' : 'poems' ?></span>
+                </a>
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>

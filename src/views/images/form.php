@@ -3,7 +3,11 @@
 <?php $isNew = $isNew ?? false; ?>
 
 <nav class="mb-7" aria-label="Breadcrumb">
-    <a href="/images/" class="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-amber-700">&larr; Back to images</a>
+    <a href="/">Dashboard</a>
+    <span>/</span>
+    <a href="/images/">Images</a>
+    <span>/</span>
+    <span aria-current="page"><?= $isNew ? 'New Image' : 'Edit image details' ?></span>
 </nav>
 
 <div class="mx-auto max-w-2xl">

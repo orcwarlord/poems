@@ -84,3 +84,19 @@ CREATE TABLE IF NOT EXISTS poem_categories (
     CONSTRAINT fk_poem_categories_poem FOREIGN KEY (poem_id) REFERENCES poems (id) ON DELETE CASCADE,
     CONSTRAINT fk_poem_categories_category FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS volumes (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description MEDIUMTEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS volume_poems (
+    volume_id INT UNSIGNED NOT NULL,
+    poem_id INT UNSIGNED NOT NULL,
+    PRIMARY KEY (volume_id, poem_id),
+    CONSTRAINT fk_volume_poems_volume FOREIGN KEY (volume_id) REFERENCES volumes (id) ON DELETE CASCADE,
+    CONSTRAINT fk_volume_poems_poem FOREIGN KEY (poem_id) REFERENCES poems (id) ON DELETE CASCADE
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
