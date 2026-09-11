@@ -65,6 +65,7 @@ class Poem
 
         if ($poem !== false) {
             $poem['categories'] = $this->categoriesFor($id);
+            $poem['volumes'] = $this->volumesFor($id);
             $poem['version_number'] = $this->versionNumber($id);
             $poem['versions'] = $this->versionsFor($id);
             $poem['submissions'] = $this->submissionsFor($id);
@@ -73,7 +74,7 @@ class Poem
         return $poem === false ? null : $poem;
     }
 
-    public function create(string $title, string $writtenDate, string $description, string $content, ?int $photoId, ?int $parentPoemId = null, array $categoryIds = []): int
+    public function create(string $title, string $writtenDate, string $description, string $content, ?int $photoId, ?int $parentPoemId = null, array $categoryIds = [], array $volumeIds = []): int
     {
         $this->db->beginTransaction();
         $stmt = $this->db->prepare(
@@ -90,12 +91,13 @@ class Poem
         ]);
         $id = (int) $this->db->lastInsertId();
         $this->syncCategories($id, $categoryIds);
+        $this->syncVolumes($id, $volumeIds);
         $this->db->commit();
 
         return $id;
     }
 
-    public function update(int $id, string $title, string $writtenDate, string $description, string $content, ?int $photoId, array $categoryIds = []): bool
+    public function update(int $id, string $title, string $writtenDate, string $description, string $content, ?int $photoId, array $categoryIds = [], array $volumeIds = []): bool
     {
         $this->db->beginTransaction();
         $stmt = $this->db->prepare(
@@ -111,6 +113,7 @@ class Poem
             'id' => $id,
         ]);
         $this->syncCategories($id, $categoryIds);
+        $this->syncVolumes($id, $volumeIds);
         $this->db->commit();
 
         return $stmt->rowCount() === 1;
@@ -122,6 +125,18 @@ class Poem
             'SELECT c.id, c.name FROM categories c
              INNER JOIN poem_categories pc ON pc.category_id = c.id
              WHERE pc.poem_id = :poem_id ORDER BY c.name'
+        );
+        $stmt->execute(['poem_id' => $poemId]);
+
+        return $stmt->fetchAll();
+    }
+
+    public function volumesFor(int $poemId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT v.id, v.name FROM volumes v
+             INNER JOIN volume_poems vp ON vp.volume_id = v.id
+             WHERE vp.poem_id = :poem_id ORDER BY v.name'
         );
         $stmt->execute(['poem_id' => $poemId]);
 
@@ -195,6 +210,26 @@ class Poem
         );
         foreach ($categoryIds as $categoryId) {
             $stmt->execute(['poem_id' => $poemId, 'category_id' => $categoryId]);
+        }
+    }
+
+    private function syncVolumes(int $poemId, array $volumeIds): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM volume_poems WHERE poem_id = :poem_id');
+        $stmt->execute(['poem_id' => $poemId]);
+
+        if ($volumeIds === []) {
+            return;
+        }
+
+        $stmt = $this->db->prepare(
+            'INSERT INTO volume_poems (poem_id, volume_id) VALUES (:poem_id, :volume_id)'
+        );
+        foreach (array_values(array_unique(array_map('intval', $volumeIds))) as $volumeId) {
+            if ($volumeId <= 0) {
+                continue;
+            }
+            $stmt->execute(['poem_id' => $poemId, 'volume_id' => $volumeId]);
         }
     }
 

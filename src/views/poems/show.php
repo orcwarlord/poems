@@ -39,6 +39,14 @@
     </div>
     <?php endif; ?>
 
+    <?php if (!empty($poem['volumes'])): ?>
+    <div class="mb-8 flex flex-wrap gap-2">
+        <?php foreach ($poem['volumes'] as $volume): ?>
+        <a href="/volumes/view.php?id=<?= (int) $volume['id'] ?>" class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm text-amber-700 hover:border-amber-300 hover:text-amber-800 transition-colors"><?= e($volume['name']) ?></a>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
     <div class="poem-content prose prose-stone max-w-none"><?= sanitize_html($poem['content']) ?></div>
 
     <section class="mt-10 border-t border-stone-100 pt-6">
